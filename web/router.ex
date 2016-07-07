@@ -8,4 +8,8 @@ defmodule HaloSir.Router do
   scope "/api", HaloSir do
     pipe_through :api
   end
+
+  scope "/youdao", HaloSir do
+    get "/query/:word", YoudaoController, :query
+  end
 end

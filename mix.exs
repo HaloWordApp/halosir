@@ -17,7 +17,8 @@ defmodule HaloSir.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {HaloSir, []},
-     applications: [:phoenix, :phoenix_pubsub, :cowboy, :logger, :gettext]]
+     applications: [:phoenix, :phoenix_pubsub, :cowboy, :logger, :gettext,
+                    :httpotion]]
   end
 
   # Specifies which paths to compile per environment.
@@ -31,6 +32,8 @@ defmodule HaloSir.Mixfile do
     [{:phoenix, "~> 1.2.0"},
      {:phoenix_pubsub, "~> 1.0"},
      {:gettext, "~> 0.11"},
-     {:cowboy, "~> 1.0"}]
+     {:cowboy, "~> 1.0"},
+     {:httpotion, "~> 3.0.0"},
+     {:riakc, github: "basho/riak-erlang-client"}]
   end
 end

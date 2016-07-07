@@ -17,6 +17,9 @@ config :halosir, HaloSir.Endpoint,
   pubsub: [name: HaloSir.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
+# Configure Cache-Control value in response
+config :halosir, cache_control: "max-age=#{3600 * 24 * 7}"
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
