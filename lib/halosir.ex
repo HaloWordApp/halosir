@@ -1,4 +1,6 @@
 defmodule HaloSir do
+  @moduledoc false
+
   use Application
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
@@ -10,8 +12,7 @@ defmodule HaloSir do
     children = [
       # Start the endpoint when the application starts
       supervisor(HaloSir.Endpoint, []),
-      # Start your own worker by calling: HaloSir.Worker.start_link(arg1, arg2, arg3)
-      # worker(HaloSir.Worker, [arg1, arg2, arg3]),
+      worker(HaloSir.RiakStore, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

@@ -24,4 +24,9 @@ config :phoenix, :stacktrace_depth, 20
 # Override default Cache Control value with a more transient one
 config :halosir, cache_control: "max-age=0"
 
+config :halosir, HaloSir.RiakStore,
+  host: '127.0.0.1',
+  port: 8087
+
+# Import api keys from production server for now
 import_config "prod.secret.exs"
