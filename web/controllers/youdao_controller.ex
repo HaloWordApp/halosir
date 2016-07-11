@@ -1,5 +1,6 @@
 defmodule HaloSir.YoudaoController do
   use HaloSir.Web, :controller
+  alias HaloSir.Rules
 
   @query_url_base "https://fanyi.youdao.com/fanyiapi.do?type=data&doctype=json&version=1.1" <>
     "&keyfrom=#{Application.get_env(:halosir, __MODULE__)[:keyfrom]}" <>
@@ -23,9 +24,11 @@ defmodule HaloSir.YoudaoController do
           |> HTTPotion.get!()
           |> Map.get(:body)
 
-        obj = :riakc_obj.new("youdao", word, result, "text/plain")
-        HaloSir.RiakStore.put(obj)
-        #HaloSir.RiakStore.incr("youdao", word)
+        if Rules.should_cache_word?(word) do
+          obj = :riakc_obj.new("youdao", word, result, "text/plain")
+          HaloSir.RiakStore.put(obj)
+          #HaloSir.RiakStore.incr("youdao", word)
+        end
 
         text(conn, result)
       _ ->

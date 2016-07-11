@@ -1,6 +1,7 @@
 defmodule HaloSir.WebsterController do
   @moduledoc false
   use HaloSir.Web, :controller
+  alias HaloSir.Rules
 
   @query_url_eex "http://www.dictionaryapi.com/api/v1/references/collegiate/xml/<%= word %>?key=<%= key %>"
   @keys Application.get_env(:halosir, __MODULE__)[:keys]
@@ -21,8 +22,10 @@ defmodule HaloSir.WebsterController do
           |> HTTPotion.get!()
           |> Map.get(:body)
 
-        obj = :riakc_obj.new("webster", word, result, "text/plain")
-        HaloSir.RiakStore.put(obj)
+        if Rules.should_cache_word?(word) do
+          obj = :riakc_obj.new("webster", word, result, "text/plain")
+          HaloSir.RiakStore.put(obj)
+        end
 
         text(conn, result)
       _ ->
