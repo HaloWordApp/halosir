@@ -1,10 +1,9 @@
 defmodule HaloSir.YoudaoController do
   use HaloSir.Web, :controller
 
-  @api_base "https://fanyi.youdao.com/fanyiapi.do?type=data&doctype=json&version=1.1\
-&keyfrom=#{Application.get_env(:halosir, __MODULE__)[:keyfrom]}\
-&key=#{Application.get_env(:halosir, __MODULE__)[:key]}\
-&" # To append `q=xxx`
+  @query_url_base "https://fanyi.youdao.com/fanyiapi.do?type=data&doctype=json&version=1.1" <>
+    "&keyfrom=#{Application.get_env(:halosir, __MODULE__)[:keyfrom]}" <>
+    "&key=#{Application.get_env(:halosir, __MODULE__)[:key]}&q="
 
   plug :youdao_headers
 
@@ -13,13 +12,20 @@ defmodule HaloSir.YoudaoController do
       {:ok, cached_obj} ->
         # Use cached result
         result = :riakc_obj.get_values(cached_obj) |> hd
+        #HaloSir.RiakStore.incr("youdao", word)
+
         text(conn, result)
       {:error, :notfound} ->
         # Query server and cache the result
-        result = HTTPotion.get!(@api_base <> URI.encode_query(%{"q" => word})).body
+        result =
+          @query_url_base
+          |> Kernel.<>(URI.encode_www_form(word))
+          |> HTTPotion.get!()
+          |> Map.get(:body)
 
         obj = :riakc_obj.new("youdao", word, result, "text/plain")
         HaloSir.RiakStore.put(obj)
+        #HaloSir.RiakStore.incr("youdao", word)
 
         text(conn, result)
       _ ->

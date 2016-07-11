@@ -16,6 +16,10 @@ defmodule HaloSir.RiakStore do
     GenServer.cast(__MODULE__, {:put, obj})
   end
 
+  def incr(bucket, key) do
+    GenServer.cast(__MODULE__, {:incr, bucket, key})
+  end
+
   # GenServer Callbacks
 
   def init(config) do
@@ -24,18 +28,17 @@ defmodule HaloSir.RiakStore do
   end
 
   def handle_call({:get, bucket, key}, _from, %{pid: pid} = state) do
-    result = :riakc_pb_socket.get(pid, bucket, key)
-
-    # Increase counter if key exist
-    # case result do
-    #   {:ok, _} -> :riakc_pb_socket.counter_incr(pid, bucket, key, 1)
-    #   _ -> nil
-    # end
-
-    {:reply, result, state}
+    {:reply, :riakc_pb_socket.get(pid, bucket, key), state}
   end
+  def handle_call(_msg, _from, state), do: {:reply, :badmsg, state}
 
   def handle_cast({:put, obj}, %{pid: pid} = state) do
-    {:reply, :riakc_pb_socket.put(pid, obj), state}
+    :riakc_pb_socket.put(pid, obj)
+    {:noreply, state}
   end
+  def handle_cast({:incr, bucket, key}, %{pid: pid} = state) do
+    :riakc_pb_socket.counter_incr(pid, bucket, key, 1)
+    {:noreply, state}
+  end
+  def handle_cast(_msg, state), do: {:noreply, state}
 end
