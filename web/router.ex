@@ -12,4 +12,8 @@ defmodule HaloSir.Router do
   scope "/youdao", HaloSir do
     get "/query/:word", YoudaoController, :query
   end
+
+  scope "/webster", HaloSir do
+    get "/query/:word", WebsterController, :query
+  end
 end
