@@ -62,10 +62,24 @@ defmodule HaloSir.DetsStore do
     :dets.update_counter(table, key, {3, 1})
     {:noreply, state}
   end
+  def handle_cast(:close, refs) do
+    Enum.each(refs, fn ref ->
+      :dets.close(ref)
+    end)
+    {:noreply, refs}
+  end
   def handle_cast(_msg, state), do: {:noreply, state}
 
   defp format_get_result([]), do: {:error, :notfound}
   defp format_get_result([{_key, cached_result, _counter}]), do: {:ok, cached_result}
   defp format_get_result(_), do: {:error, :data_error}
+
+  def terminate(_reason, refs) do
+    Enum.each(refs, fn ref ->
+      :dets.close(ref)
+    end)
+
+    :ok
+  end
 
 end
