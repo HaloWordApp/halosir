@@ -9,13 +9,12 @@ defmodule HaloSir.YoudaoController do
   plug :youdao_headers
 
   def query(conn, %{"word" => word}) do
-    case HaloSir.RiakStore.get("youdao", word) do
-      {:ok, cached_obj} ->
+    case HaloSir.DetsStore.get(:webster, word) do
+      {:ok, cached_result} ->
         # Use cached result
-        result = :riakc_obj.get_values(cached_obj) |> hd
-        #HaloSir.RiakStore.incr("youdao", word)
+        HaloSir.DetsStore.incr(:youdao, word)
 
-        text(conn, result)
+        text(conn, cached_result)
       {:error, :notfound} ->
         # Query server and cache the result
         result =
@@ -25,9 +24,7 @@ defmodule HaloSir.YoudaoController do
           |> Map.get(:body)
 
         if Rules.should_cache_word?(word) do
-          obj = :riakc_obj.new("youdao", word, result, "text/plain")
-          HaloSir.RiakStore.put(obj)
-          #HaloSir.RiakStore.incr("youdao", word)
+          HaloSir.DetsStore.put(:youdao, word, result)
         end
 
         text(conn, result)

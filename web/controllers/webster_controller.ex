@@ -9,11 +9,12 @@ defmodule HaloSir.WebsterController do
   plug :webster_headers
 
   def query(conn, %{"word" => word}) do
-    case HaloSir.RiakStore.get("webster", word) do
-      {:ok, cached_obj} ->
+    case HaloSir.DetsStore.get(:webster, word) do
+      {:ok, cached_result} ->
         # Use cached result
-        result = :riakc_obj.get_values(cached_obj) |> hd
-        text(conn, result)
+        HaloSir.DetsStore.incr(:webster, word)
+
+        text(conn, cached_result)
       {:error, :notfound} ->
         # Query server and cache the result
         result =
@@ -23,8 +24,7 @@ defmodule HaloSir.WebsterController do
           |> Map.get(:body)
 
         if Rules.should_cache_word?(word) do
-          obj = :riakc_obj.new("webster", word, result, "text/plain")
-          HaloSir.RiakStore.put(obj)
+          HaloSir.DetsStore.put(:webster, word, result)
         end
 
         text(conn, result)

@@ -8,3 +8,7 @@ config :halosir, HaloSir.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+# Use a test-specific data directory
+config :halosir, HaloSir.DetsStore,
+  data_dir: "test/data/"

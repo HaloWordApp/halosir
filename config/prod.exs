@@ -19,8 +19,4 @@ config :halosir, HaloSir.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
-config :halosir, HaloSir.RiakStore,
-  host: '127.0.0.1',
-  port: 8087
-
 import_config "prod.secret.exs"

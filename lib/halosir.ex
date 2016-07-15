@@ -7,7 +7,7 @@ defmodule HaloSir do
 
     children = [
       supervisor(HaloSir.Endpoint, []),
-      worker(HaloSir.RiakStore, []),
+      worker(HaloSir.DetsStore, []),
     ]
 
     opts = [strategy: :one_for_one, name: HaloSir.Supervisor]

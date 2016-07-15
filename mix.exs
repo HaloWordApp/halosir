@@ -34,7 +34,6 @@ defmodule HaloSir.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:httpotion, "~> 3.0.0"},
-     {:riakc, github: "basho/riak-erlang-client"},
      {:credo, "~> 0.4.5", only: :dev},
      {:bypass, github: "PSPDFKit-labs/bypass", only: [:dev, :test]},
     ]
