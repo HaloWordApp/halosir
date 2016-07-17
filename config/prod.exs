@@ -16,7 +16,7 @@ config :halosir, HaloSir.Endpoint,
   url: [host: "halo.xhacker.im", port: 443],
   https: [port: 443,
           keyfile: System.get_env("KEY_PATH"),
-          certfile: System.get_env("CERT_PATH")]
+          certfile: System.get_env("CERT_PATH")],
   cache_static_manifest: "priv/static/manifest.json"
 
 # Do not print debug messages in production
