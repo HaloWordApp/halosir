@@ -9,7 +9,7 @@ defmodule HaloSir.YoudaoController do
   plug :youdao_headers
 
   def query(conn, %{"word" => word}) do
-    case HaloSir.DetsStore.get(:webster, word) do
+    case HaloSir.DetsStore.get(:youdao, word) do
       {:ok, cached_result} ->
         # Use cached result
         HaloSir.DetsStore.incr(:youdao, word)
