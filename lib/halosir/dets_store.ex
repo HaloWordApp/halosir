@@ -60,7 +60,7 @@ defmodule HaloSir.DetsStore do
   end
   def handle_call(_msg, _from, state), do: {:reply, :badmsg, state}
 
-  def handle_case({:put, table, key, val}, state) do
+  def handle_cast({:put, table, key, val}, state) do
     :dets.insert(table, {key, val, 1})
     {:noreply, state}
   end
