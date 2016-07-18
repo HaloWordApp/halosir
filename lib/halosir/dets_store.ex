@@ -41,7 +41,7 @@ defmodule HaloSir.DetsStore do
         filename = Atom.to_string(table) <> ".dets"
         file_path =
           Path.join([config[:data_dir], filename])
-          |> String.to_charlist
+          |> String.to_char_list
 
         {:ok, ref} = :dets.open_file(table, access: :read_write, file: file_path)
 
