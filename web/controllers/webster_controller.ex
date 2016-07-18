@@ -3,9 +3,6 @@ defmodule HaloSir.WebsterController do
   use HaloSir.Web, :controller
   alias HaloSir.Rules
 
-  @query_url_eex "http://www.dictionaryapi.com/api/v1/references/collegiate/xml/<%= word %>?key=<%= key %>"
-  @keys Application.get_env(:halosir, __MODULE__)[:keys]
-
   plug :webster_headers
 
   def query(conn, %{"word" => word}) do
@@ -17,9 +14,13 @@ defmodule HaloSir.WebsterController do
         text(conn, cached_result)
       {:error, :notfound} ->
         # Query server and cache the result
+        key =
+          Application.get_env(:halosir, __MODULE__)[:keys]
+          |> Enum.random()
+
         result =
-          @query_url_eex
-          |> EEx.eval_string([word: URI.encode_www_form(word), key: Enum.random(@keys)])
+          Application.get_env(:halosir, __MODULE__)[:api_eex]
+          |> EEx.eval_string([word: URI.encode_www_form(word), key: key])
           |> HTTPotion.get!()
           |> Map.get(:body)
 

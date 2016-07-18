@@ -2,10 +2,6 @@ defmodule HaloSir.YoudaoController do
   use HaloSir.Web, :controller
   alias HaloSir.Rules
 
-  @query_url_base "https://fanyi.youdao.com/fanyiapi.do?type=data&doctype=json&version=1.1" <>
-    "&keyfrom=#{Application.get_env(:halosir, __MODULE__)[:keyfrom]}" <>
-    "&key=#{Application.get_env(:halosir, __MODULE__)[:key]}&q="
-
   plug :youdao_headers
 
   def query(conn, %{"word" => word}) do
@@ -17,9 +13,15 @@ defmodule HaloSir.YoudaoController do
         text(conn, cached_result)
       {:error, :notfound} ->
         # Query server and cache the result
+        args =
+          Application.get_env(:halosir, __MODULE__)
+          |> Keyword.delete(:api_base)
+          |> Keyword.merge([q: word])
+          |> URI.encode_query()
+
         result =
-          @query_url_base
-          |> Kernel.<>(URI.encode_www_form(word))
+          Application.get_env(:halosir, __MODULE__)[:api_base]
+          |> Kernel.<>(args)
           |> HTTPotion.get!()
           |> Map.get(:body)
 

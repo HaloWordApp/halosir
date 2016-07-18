@@ -25,4 +25,12 @@ config :halosir, HaloSir.DetsStore,
   tables: [:youdao, :webster],
   data_dir: "data/"
 
+# Configures Dictionary Services' api endpoints
+# This is mainly for writing unit test with Bypass
+config :halosir, HaloSir.YoudaoController,
+  api_base: "https://fanyi.youdao.com/fanyiapi.do?type=data&doctype=json&version=1.1&"
+
+config :halosir, HaloSir.WebsterController,
+  api_eex: "http://www.dictionaryapi.com/api/v1/references/collegiate/xml/<%= word %>?key=<%= key %>"
+
 import_config "#{Mix.env}.exs"
