@@ -28,6 +28,10 @@ defmodule HaloSir.DetsStore do
     GenServer.cast(__MODULE__, {:incr, table, key})
   end
 
+  def close() do
+    GenServer.cast(__MODULE__, :close)
+  end
+
   # GenServer Callbacks
 
   def init(config) do
@@ -35,9 +39,11 @@ defmodule HaloSir.DetsStore do
     refs =
       Enum.map(config[:tables], fn table ->
         filename = Atom.to_string(table) <> ".dets"
-        file_path = Path.join([config[:data_dir], filename])
+        file_path =
+          Path.join([config[:data_dir], filename])
+          |> String.to_charlist
 
-        {:ok, ref} = :dets.open_file(table, file: file_path)
+        {:ok, ref} = :dets.open_file(table, access: :read_write, file: file_path)
 
         ref
       end)

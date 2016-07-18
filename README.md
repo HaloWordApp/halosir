@@ -6,4 +6,4 @@ HaloSir is based on Elixir/Phoenix, and use DETS from Erlang/OTP as storage inst
 
 ## Note
 
-Before I figure out how to properly close DETS file, you need to manually call `GenServer.cast(HaloSir.DetsStore, :close)` before using double `Ctrl-c` to close the REPL.
+Before I figure out how to properly close DETS file, you need to manually call `HaloSir.DetsStore.close` before using double `Ctrl-c` to close the REPL.
