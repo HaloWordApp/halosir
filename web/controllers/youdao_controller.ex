@@ -12,18 +12,29 @@ defmodule HaloSir.YoudaoController do
 
         text(conn, cached_result)
       {:error, :notfound} ->
-        # Query server and cache the result
-        args =
-          Application.get_env(:halosir, __MODULE__)
-          |> Keyword.delete(:api_base)
-          |> Keyword.merge([q: word])
-          |> URI.encode_query()
+        config = Application.get_env(:halosir, __MODULE__)
 
         result =
-          Application.get_env(:halosir, __MODULE__)[:api_base]
+        if Keyword.has_key?(config, :proxy) do
+          # If configured to use proxy, we query the proxy server instead
+          config[:proxy]
+          |> Kernel.<>(URI.encode_www_form(word))
+          |> HTTPotion.get!()
+          |> Map.get(:body)
+
+        else
+          # Query server and cache the result
+          args =
+            config
+            |> Keyword.delete(:api_base)
+            |> Keyword.merge([q: word])
+            |> URI.encode_query()
+
+          config[:api_base]
           |> Kernel.<>(args)
           |> HTTPotion.get!()
           |> Map.get(:body)
+        end
 
         if Rules.should_cache_word?(word) do
           HaloSir.DetsStore.put(:youdao, word, result)
