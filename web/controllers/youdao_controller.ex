@@ -18,7 +18,7 @@ defmodule HaloSir.YoudaoController do
         if Keyword.has_key?(config, :proxy) do
           # If configured to use proxy, we query the proxy server instead
           config[:proxy]
-          |> Kernel.<>(URI.encode_www_form(word))
+          |> Kernel.<>(word)
           |> HTTPotion.get!()
           |> Map.get(:body)
 
