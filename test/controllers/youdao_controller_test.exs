@@ -44,4 +44,27 @@ defmodule HaloSir.YoudaoControllerTest do
     assert HaloSir.DetsStore.get(:youdao, "test") == {:ok, "test result to cache"}
     assert {"test", "test result to cache", 1} == :dets.lookup(:youdao, "test") |> hd
   end
+
+  test "When configured proxy, use the proxy to fetch result", %{bypass: bypass} do
+    proxy_config = [
+      proxy: "http://localhost:#{bypass.port}/youdao/query/"
+    ]
+
+    Application.put_env(:halosir, HaloSir.YoudaoController, proxy_config)
+
+    Bypass.expect bypass, fn conn ->
+      assert conn.request_path == "/youdao/query/test"
+      assert conn.method == "GET"
+
+      Conn.resp(conn, 200, "test result from proxy")
+    end
+
+    :dets.delete(:youdao, "test")
+
+    conn = get build_conn(), "/youdao/query/test"
+
+    assert conn.resp_body =~ "test result from proxy"
+    assert HaloSir.DetsStore.get(:youdao, "test") == {:ok, "test result from proxy"}
+    assert {"test", "test result from proxy", 1} == :dets.lookup(:youdao, "test") |> hd
+  end
 end
