@@ -23,8 +23,6 @@ defmodule HaloSir.YoudaoControllerTest do
 
     conn = get build_conn(), "/youdao/query/test"
     assert conn.resp_body =~ "test cached result"
-
-    Bypass.up(bypass)
   end
 
   test "Query non-cached word should hit the server, then cache the result", %{bypass: bypass} do
