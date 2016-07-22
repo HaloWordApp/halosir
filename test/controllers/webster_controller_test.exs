@@ -24,6 +24,8 @@ defmodule HaloSir.WebsterControllerTest do
 
     conn = get build_conn(), "/webster/query/test"
     assert conn.resp_body =~ "test cached result"
+
+    assert_headers(conn)
   end
 
   test "Query non-cached word should hit the server, then cache the result", %{bypass: bypass} do
@@ -44,6 +46,14 @@ defmodule HaloSir.WebsterControllerTest do
     assert conn.resp_body =~ "test result to cache"
     assert HaloSir.DetsStore.get(:webster, "test") == {:ok, "test result to cache"}
     assert {"test", "test result to cache", 1} == :dets.lookup(:webster, "test") |> hd
+
+    assert_headers(conn)
+  end
+
+  defp assert_headers(conn) do
+    headers = Map.new(conn.resp_headers)
+    assert Map.get(headers, "cache-control") == Application.get_env(:halosir, :cache_control)
+    assert Map.get(headers, "content-type") =~ "application/xml"
   end
 
 end
