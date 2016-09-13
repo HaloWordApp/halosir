@@ -33,4 +33,9 @@ config :halosir, HaloSir.YoudaoController,
 config :halosir, HaloSir.WebsterController,
   api_eex: "http://www.dictionaryapi.com/api/v1/references/collegiate/xml/<%= word %>?key=<%= key %>"
 
+# Configures Fluxter with a local InfluxDB
+config :fluxter, HaloSir.MetricStore,
+  host: "127.0.0.1",
+  port: 6001
+
 import_config "#{Mix.env}.exs"

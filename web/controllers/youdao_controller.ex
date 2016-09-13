@@ -1,14 +1,17 @@
 defmodule HaloSir.YoudaoController do
+  @moduledoc false
   use HaloSir.Web, :controller
-  alias HaloSir.Rules
+  alias HaloSir.{Rules, DetsStore, MetricStore}
 
   plug :youdao_headers
 
   def query(conn, %{"word" => word}) do
-    case HaloSir.DetsStore.get(:youdao, word) do
+    case DetsStore.get(:youdao, word) do
       {:ok, cached_result} ->
         # Use cached result
-        HaloSir.DetsStore.incr(:youdao, word)
+        DetsStore.incr(:youdao, word)
+
+        MetricStore.write("dict_query", [dict: "youdao", cached: true], [word: word])
 
         text(conn, cached_result)
       {:error, :notfound} ->
@@ -41,8 +44,12 @@ defmodule HaloSir.YoudaoController do
           |> Map.get(:body)
         end
 
+        MetricStore.write("dict_query", [dict: "youdao", cached: false], [word: word])
+
         if Rules.should_cache_word?(word) do
-          HaloSir.DetsStore.put(:youdao, word, result)
+          DetsStore.put(:youdao, word, result)
+
+          MetricStore.write("dets_cache", [dict: "youdao"], [word: word])
         end
 
         text(conn, result)

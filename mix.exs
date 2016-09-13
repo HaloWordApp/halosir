@@ -16,7 +16,7 @@ defmodule HaloSir.Mixfile do
   def application do
     [mod: {HaloSir, []},
      applications: [:phoenix, :phoenix_pubsub, :cowboy, :logger, :gettext,
-                    :httpotion]]
+                    :httpotion, :fluxter]]
   end
 
   defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
@@ -28,8 +28,10 @@ defmodule HaloSir.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:httpotion, "~> 3.0.0"},
+     {:fluxter, "~> 0.4"},
      {:credo, "~> 0.4.5", only: :dev},
      {:bypass, github: "PSPDFKit-labs/bypass", only: [:dev, :test]},
+     {:meck, "~> 0.8.4", only: :test},
     ]
   end
 

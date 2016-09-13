@@ -6,8 +6,9 @@ defmodule HaloSir do
     import Supervisor.Spec
 
     children = [
-      supervisor(HaloSir.Endpoint, []),
       worker(HaloSir.DetsStore, []),
+      supervisor(HaloSir.Endpoint, []),
+      supervisor(HaloSir.MetricStore, []),
     ]
 
     opts = [strategy: :one_for_one, name: HaloSir.Supervisor]

@@ -1,15 +1,17 @@
 defmodule HaloSir.WebsterController do
   @moduledoc false
   use HaloSir.Web, :controller
-  alias HaloSir.Rules
+  alias HaloSir.{Rules, DetsStore, MetricStore}
 
   plug :webster_headers
 
   def query(conn, %{"word" => word}) do
-    case HaloSir.DetsStore.get(:webster, word) do
+    case DetsStore.get(:webster, word) do
       {:ok, cached_result} ->
         # Use cached result
-        HaloSir.DetsStore.incr(:webster, word)
+        DetsStore.incr(:webster, word)
+
+        MetricStore.write("dict_query", [dict: "webster", cached: true], [word: word])
 
         text(conn, cached_result)
       {:error, :notfound} ->
@@ -24,8 +26,12 @@ defmodule HaloSir.WebsterController do
           |> HTTPotion.get!()
           |> Map.get(:body)
 
+        MetricStore.write("dict_query", [dict: "webster", cached: false], [word: word])
+
         if Rules.should_cache_word?(word) do
-          HaloSir.DetsStore.put(:webster, word, result)
+          DetsStore.put(:webster, word, result)
+
+          MetricStore.write("dets_cache", [dict: "webster"], [word: word])
         end
 
         text(conn, result)
