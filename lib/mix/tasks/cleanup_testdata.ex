@@ -1,4 +1,5 @@
 defmodule Mix.Tasks.CleanupTestdata do
+  @moduledoc false
   use Mix.Task
   require Logger
 
