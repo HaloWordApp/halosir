@@ -1,6 +1,7 @@
 # HaloSir
 
 [![CircleCI](https://circleci.com/gh/ElaWorkshop/halosir/tree/master.svg?style=svg)](https://circleci.com/gh/ElaWorkshop/halosir/tree/master)
+[![Deps Status](https://beta.hexfaktor.org/badge/all/github/ElaWorkshop/halosir.svg)](https://beta.hexfaktor.org/github/ElaWorkshop/halosir)
 
 HaloSir is the new server for Halo Word, the dictionary extension for Google Chrome.
 
