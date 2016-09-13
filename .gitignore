@@ -18,3 +18,6 @@ erl_crash.dump
 # Ignore data directory
 /data
 /test/data
+
+# Ignore TICK stack data directory
+/priv/tick/data
