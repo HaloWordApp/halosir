@@ -47,6 +47,11 @@ defmodule HaloSir.Web do
   def router do
     quote do
       use Phoenix.Router
+      use Plug.ErrorHandler
+
+      defp handle_errors(conn, %{kind: kind, reason: reason, stack: stacktrace}) do
+        Rollbax.report(kind, reason, stacktrace)
+      end
     end
   end
 

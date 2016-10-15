@@ -7,4 +7,7 @@ config :halosir, HaloSir.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
+config :rollbax,
+  environment: "production"
+
 import_config "prod.secret.exs"
