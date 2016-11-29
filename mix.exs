@@ -30,7 +30,7 @@ defmodule HaloSir.Mixfile do
      {:httpotion, "~> 3.0.0"},
      {:fluxter, "~> 0.4"},
      {:rollbax, "~> 0.7"},
-     {:credo, "~> 0.4.5", only: :dev},
+     {:credo, "~> 0.5", only: :dev},
      {:bypass, github: "PSPDFKit-labs/bypass", only: [:dev, :test]},
     ]
   end
