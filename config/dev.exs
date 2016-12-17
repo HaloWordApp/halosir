@@ -24,9 +24,5 @@ config :phoenix, :stacktrace_depth, 20
 # Override default Cache Control value with a more transient one
 config :halosir, cache_control: "max-age=0"
 
-# Replace Rollbar with log
-config :rollbax,
-  enabled: :log
-
 # Import api keys from production server for now
 import_config "prod.secret.exs"

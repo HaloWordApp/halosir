@@ -6,7 +6,4 @@ config :halosir, HaloSir.Endpoint,
 
 config :logger, level: :error
 
-config :rollbax,
-  environment: "production"
-
 import_config "prod.secret.exs"
