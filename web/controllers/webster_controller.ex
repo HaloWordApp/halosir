@@ -8,33 +8,36 @@ defmodule HaloSir.WebsterController do
   def query(conn, %{"word" => word}) do
     case DetsStore.get(:webster, word) do
       {:ok, cached_result} ->
-        # Use cached result
         DetsStore.incr(:webster, word)
 
         MetricStore.write("dict_query", [dict: "webster", cached: true], [word: word])
 
         text(conn, cached_result)
       {:error, :notfound} ->
-        # Query server and cache the result
         key =
           Application.get_env(:halosir, __MODULE__)[:keys]
           |> Enum.random()
 
-        result =
+        resp =
           Application.get_env(:halosir, __MODULE__)[:api_eex]
           |> EEx.eval_string([word: URI.encode_www_form(word), key: key])
           |> HTTPotion.get!()
-          |> Map.get(:body)
 
-        MetricStore.write("dict_query", [dict: "webster", cached: false], [word: word])
+        if resp.status_code != 200 do
+          resp(conn, resp.status_code, resp.body)
+        else
+          result = Map.get(resp, :body)
 
-        if Rules.should_cache_word?(word) do
-          DetsStore.put(:webster, word, result)
+          MetricStore.write("dict_query", [dict: "webster", cached: false], [word: word])
 
-          MetricStore.write("dets_cache", [dict: "webster"], [word: word])
+          if Rules.should_cache_word?(word) do
+            DetsStore.put(:webster, word, result)
+
+            MetricStore.write("dets_cache", [dict: "webster"], [word: word])
+          end
+
+          text(conn, result)
         end
-
-        text(conn, result)
       _ ->
         halt(conn)
     end

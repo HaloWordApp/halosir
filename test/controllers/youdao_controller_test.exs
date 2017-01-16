@@ -72,6 +72,24 @@ defmodule HaloSir.YoudaoControllerTest do
     assert_headers(conn)
   end
 
+  test "Failed query shouldn't be cached, and should return the same response as source", %{bypass: bypass} do
+    Bypass.expect bypass, fn conn ->
+      conn = Conn.fetch_query_params(conn)
+      assert conn.query_params["q"] == "test"
+      assert conn.method == "GET"
+
+      Conn.resp(conn, 500, "Internal Server Error")
+    end
+
+    :dets.delete(:youdao, "test")
+
+    conn = get build_conn(), "/youdao/query/test"
+
+    assert conn.status == 500
+    assert conn.resp_body =~ "Internal Server Error"
+    assert :dets.lookup(:youdao, "test") == []
+  end
+
   defp assert_headers(conn) do
     headers = Map.new(conn.resp_headers)
     assert Map.get(headers, "cache-control") == Application.get_env(:halosir, :cache_control)

@@ -31,7 +31,6 @@ defmodule HaloSir.WebsterControllerTest do
   test "Query non-cached word should hit the server, then cache the result", %{bypass: bypass} do
     Bypass.expect bypass, fn conn ->
       conn = Conn.fetch_query_params(conn)
-
       assert conn.query_params["key"] in @keys
       assert conn.request_path == "/test"
       assert conn.method == "GET"
@@ -48,6 +47,25 @@ defmodule HaloSir.WebsterControllerTest do
     assert {"test", "test result to cache", 1} == :dets.lookup(:webster, "test") |> hd
 
     assert_headers(conn)
+  end
+
+  test "Failed query shouldn't be cached, and should return the same response as source", %{bypass: bypass} do
+    Bypass.expect bypass, fn conn ->
+      conn = Conn.fetch_query_params(conn)
+      assert conn.query_params["key"] in @keys
+      assert conn.request_path == "/test"
+      assert conn.method == "GET"
+
+      Conn.resp(conn, 500, "Internal Server Error")
+    end
+
+    :dets.delete(:webster, "test")
+
+    conn = get build_conn(), "/webster/query/test"
+
+    assert conn.status == 500
+    assert conn.resp_body =~ "Internal Server Error"
+    assert :dets.lookup(:webster, "test") == []
   end
 
   defp assert_headers(conn) do

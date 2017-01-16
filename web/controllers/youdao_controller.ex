@@ -8,7 +8,6 @@ defmodule HaloSir.YoudaoController do
   def query(conn, %{"word" => word}) do
     case DetsStore.get(:youdao, word) do
       {:ok, cached_result} ->
-        # Use cached result
         DetsStore.incr(:youdao, word)
 
         MetricStore.write("dict_query", [dict: "youdao", cached: true], [word: word])
@@ -17,44 +16,48 @@ defmodule HaloSir.YoudaoController do
       {:error, :notfound} ->
         config = Application.get_env(:halosir, __MODULE__)
 
-        result =
-        if Keyword.has_key?(config, :proxy) do
-          # If configured to use proxy, we query the proxy server instead
-          encoded_word =
-            word
-            |> String.split
-            |> Enum.map(&URI.encode_www_form/1)
-            |> Enum.join(" ")
-
-          config[:proxy] <> encoded_word
+        resp =
+          query_url(config, word)
           |> HTTPotion.get!()
-          |> Map.get(:body)
 
+        if resp.status_code != 200 do
+          resp(conn, resp.status_code, resp.body)
         else
-          # Query server and cache the result
-          args =
-            config
-            |> Keyword.delete(:api_base)
-            |> Keyword.merge([q: word])
-            |> URI.encode_query()
+          result = Map.get(resp, :body)
 
-          config[:api_base]
-          |> Kernel.<>(args)
-          |> HTTPotion.get!()
-          |> Map.get(:body)
+          MetricStore.write("dict_query", [dict: "youdao", cached: false], [word: word])
+
+          if Rules.should_cache_word?(word) do
+            DetsStore.put(:youdao, word, result)
+
+            MetricStore.write("dets_cache", [dict: "youdao"], [word: word])
+          end
+
+          text(conn, result)
         end
-
-        MetricStore.write("dict_query", [dict: "youdao", cached: false], [word: word])
-
-        if Rules.should_cache_word?(word) do
-          DetsStore.put(:youdao, word, result)
-
-          MetricStore.write("dets_cache", [dict: "youdao"], [word: word])
-        end
-
-        text(conn, result)
       _ ->
         halt(conn)
+    end
+  end
+
+  defp query_url(config, word) do
+    if Keyword.has_key?(config, :proxy) do
+      encoded_word =
+        word
+        |> String.split
+        |> Enum.map(&URI.encode_www_form/1)
+        |> Enum.join(" ")
+
+      config[:proxy] <> encoded_word
+    else
+      args =
+        config
+        |> Keyword.delete(:api_base)
+        |> Keyword.merge([q: word])
+        |> URI.encode_query()
+
+      config[:api_base]
+      |> Kernel.<>(args)
     end
   end
 
