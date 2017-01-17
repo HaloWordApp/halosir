@@ -9,9 +9,7 @@ defmodule HaloSir.WebsterController do
     case DetsStore.get(:webster, word) do
       {:ok, cached_result} ->
         DetsStore.incr(:webster, word)
-
-        MetricStore.write("dict_query", [dict: "webster", cached: true], [word: word])
-
+        MetricStore.dict_query(:webster, true, word)
         text(conn, cached_result)
       {:error, :notfound} ->
         key =
@@ -24,16 +22,15 @@ defmodule HaloSir.WebsterController do
           |> HTTPotion.get!()
 
         if resp.status_code != 200 do
+          MetricStore.failed_query(:webster, word)
           resp(conn, resp.status_code, resp.body)
         else
           result = Map.get(resp, :body)
-
-          MetricStore.write("dict_query", [dict: "webster", cached: false], [word: word])
+          MetricStore.dict_query(:webster, false, word)
 
           if Rules.should_cache_word?(word) do
             DetsStore.put(:webster, word, result)
-
-            MetricStore.write("dets_cache", [dict: "webster"], [word: word])
+            MetricStore.dets_cache(:webster, word)
           end
 
           text(conn, result)

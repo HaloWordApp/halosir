@@ -9,28 +9,23 @@ defmodule HaloSir.YoudaoController do
     case DetsStore.get(:youdao, word) do
       {:ok, cached_result} ->
         DetsStore.incr(:youdao, word)
-
-        MetricStore.write("dict_query", [dict: "youdao", cached: true], [word: word])
-
+        MetricStore.dict_query(:youdao, true, word)
         text(conn, cached_result)
       {:error, :notfound} ->
-        config = Application.get_env(:halosir, __MODULE__)
-
-        resp =
-          query_url(config, word)
+        resp = word
+          |> query_url()
           |> HTTPotion.get!()
 
         if resp.status_code != 200 do
+          MetricStore.failed_query(:youdao, word)
           resp(conn, resp.status_code, resp.body)
         else
           result = Map.get(resp, :body)
-
-          MetricStore.write("dict_query", [dict: "youdao", cached: false], [word: word])
+          MetricStore.dict_query(:youdao, false, word)
 
           if Rules.should_cache_word?(word) do
             DetsStore.put(:youdao, word, result)
-
-            MetricStore.write("dets_cache", [dict: "youdao"], [word: word])
+            MetricStore.dets_cache(:youdao, word)
           end
 
           text(conn, result)
@@ -40,7 +35,9 @@ defmodule HaloSir.YoudaoController do
     end
   end
 
-  defp query_url(config, word) do
+  defp query_url(word) do
+    config = Application.get_env(:halosir, __MODULE__)
+
     if Keyword.has_key?(config, :proxy) do
       encoded_word =
         word
