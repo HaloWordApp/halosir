@@ -3,9 +3,9 @@ language: elixir
 git:
   depth: 3
 elixir:
-  - 1.4
+  - 1.5
 otp_release:
-  - 19.2
+  - 20.0
 env:
   - MIX_ENV=test VERBOSE_TESTS=true
 script:

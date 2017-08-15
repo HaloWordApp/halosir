@@ -12,14 +12,7 @@ defmodule HaloSir.WebsterController do
         MetricStore.dict_query(:webster, true, word)
         text(conn, cached_result)
       {:error, :notfound} ->
-        key =
-          Application.get_env(:halosir, __MODULE__)[:keys]
-          |> Enum.random()
-
-        resp =
-          Application.get_env(:halosir, __MODULE__)[:api_eex]
-          |> EEx.eval_string([word: URI.encode_www_form(word), key: key])
-          |> HTTPotion.get!()
+        resp = query_webster(word)
 
         if resp.status_code != 200 do
           MetricStore.failed_query(:webster, word)
@@ -38,6 +31,16 @@ defmodule HaloSir.WebsterController do
       _ ->
         halt(conn)
     end
+  end
+
+  defp query_webster(word) do
+    key =
+      Application.get_env(:halosir, __MODULE__)[:keys]
+      |> Enum.random()
+
+    Application.get_env(:halosir, __MODULE__)[:api_eex]
+    |> EEx.eval_string([word: URI.encode_www_form(word), key: key])
+    |> HTTPotion.get!()
   end
 
   defp webster_headers(conn, _opts) do

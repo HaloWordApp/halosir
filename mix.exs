@@ -3,8 +3,8 @@ defmodule HaloSir.Mixfile do
 
   def project do
     [app: :halosir,
-     version: "0.0.1",
-     elixir: "~> 1.2",
+     version: "1.0.0",
+     elixir: "~> 1.5",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
      build_embedded: Mix.env == :prod,
@@ -28,9 +28,9 @@ defmodule HaloSir.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:httpotion, "~> 3.0.0"},
-     {:fluxter, "~> 0.4"},
-     {:credo, "~> 0.5", only: :dev},
-     {:bypass, github: "PSPDFKit-labs/bypass", only: [:dev, :test]},
+     {:fluxter, "~> 0.6"},
+     {:credo, "~> 0.8", only: :dev},
+     {:bypass, "~> 0.8", only: [:dev, :test]},
     ]
   end
 

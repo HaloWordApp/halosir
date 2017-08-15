@@ -2,13 +2,15 @@ defmodule HaloSir do
   @moduledoc false
   use Application
 
+  alias HaloSir.{DetsStore, Endpoint, MetricStore}
+
   def start(_type, _args) do
     import Supervisor.Spec
 
     children = [
-      worker(HaloSir.DetsStore, []),
-      supervisor(HaloSir.Endpoint, []),
-      supervisor(HaloSir.MetricStore, []),
+      worker(DetsStore, []),
+      supervisor(Endpoint, []),
+      supervisor(MetricStore, []),
     ]
 
     opts = [strategy: :one_for_one, name: HaloSir.Supervisor]
@@ -16,7 +18,7 @@ defmodule HaloSir do
   end
 
   def config_change(changed, _new, removed) do
-    HaloSir.Endpoint.config_change(changed, removed)
+    Endpoint.config_change(changed, removed)
     :ok
   end
 end
