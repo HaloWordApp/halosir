@@ -1,7 +1,6 @@
 # HaloSir
 
 [![Build Status](https://travis-ci.org/HaloWordApp/halosir.svg?branch=master)](https://travis-ci.org/HaloWordApp/halosir)
-[![Deps Status](https://beta.hexfaktor.org/badge/all/github/ElaWorkshop/halosir.svg)](https://beta.hexfaktor.org/github/ElaWorkshop/halosir)
 
 HaloSir is the new server for [Halo Word](https://github.com/HaloWordApp/haloword), the dictionary extension for Google Chrome.
 
