@@ -27,7 +27,6 @@ defmodule HaloSir.Web do
       use Phoenix.Controller, namespace: HaloSir
 
       import HaloSir.Router.Helpers
-      import HaloSir.Gettext
     end
   end
 
@@ -39,21 +38,12 @@ defmodule HaloSir.Web do
       import Phoenix.Controller, only: [get_csrf_token: 0, get_flash: 2, view_module: 1]
 
       import HaloSir.Router.Helpers
-      import HaloSir.ErrorHelpers
-      import HaloSir.Gettext
     end
   end
 
   def router do
     quote do
       use Phoenix.Router
-    end
-  end
-
-  def channel do
-    quote do
-      use Phoenix.Channel
-      import HaloSir.Gettext
     end
   end
 

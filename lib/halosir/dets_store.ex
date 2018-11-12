@@ -45,6 +45,7 @@ defmodule HaloSir.DetsStore do
     refs =
       Enum.map(config[:tables], fn table ->
         filename = Atom.to_string(table) <> ".dets"
+
         file_path =
           [config[:data_dir], filename]
           |> Path.join()
@@ -62,8 +63,10 @@ defmodule HaloSir.DetsStore do
     Enum.each(refs, fn ref ->
       :dets.close(ref)
     end)
+
     {:noreply, refs}
   end
+
   def handle_cast(_msg, state), do: {:noreply, state}
 
   def terminate(_reason, refs) do
@@ -73,5 +76,4 @@ defmodule HaloSir.DetsStore do
 
     :ok
   end
-
 end

@@ -1,19 +1,18 @@
-defmodule HaloSir do
+defmodule HaloSir.Application do
   @moduledoc false
   use Application
 
-  alias HaloSir.{DetsStore, Endpoint, MetricStore}
+  alias HaloSir.{DetsStore, Endpoint}
 
   def start(_type, _args) do
     import Supervisor.Spec
 
     children = [
       worker(DetsStore, []),
-      supervisor(Endpoint, []),
-      supervisor(MetricStore, []),
+      supervisor(Endpoint, [])
     ]
 
-    opts = [strategy: :one_for_one, name: HaloSir.Supervisor]
+    opts = [strategy: :one_for_one, name: HaloSir.RootSup]
     Supervisor.start_link(children, opts)
   end
 

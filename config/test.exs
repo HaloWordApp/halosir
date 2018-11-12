@@ -10,5 +10,4 @@ config :halosir, HaloSir.Endpoint,
 config :logger, level: :warn
 
 # Use a test-specific data directory
-config :halosir, HaloSir.DetsStore,
-  data_dir: "test/data/"
+config :halosir, HaloSir.DetsStore, data_dir: "test/data/"
