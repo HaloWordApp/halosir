@@ -32,7 +32,7 @@ defmodule HaloSir.Mixfile do
       {:hackney, "~> 1.14.0"},
       {:jason, "~> 1.1"},
       {:credo, "~> 0.10", only: :dev},
-      {:bypass, "~> 0.8", only: [:dev, :test]}
+      {:bypass, github: "oo6/bypass", branch: "use-plug-cowboy", only: [:dev, :test]}
     ]
   end
 

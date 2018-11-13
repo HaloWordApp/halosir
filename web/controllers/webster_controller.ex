@@ -14,9 +14,9 @@ defmodule HaloSir.WebsterController do
       {:error, :notfound} ->
         resp = query_webster(word)
 
-        if resp.status_code != 200 do
+        if resp.status != 200 do
           MetricStore.failed_query(:webster, word)
-          resp(conn, resp.status_code, resp.body)
+          resp(conn, resp.status, resp.body)
         else
           result = Map.get(resp, :body)
           MetricStore.dict_query(:webster, false, word)
@@ -40,7 +40,7 @@ defmodule HaloSir.WebsterController do
 
     Application.get_env(:halosir, __MODULE__)[:api_eex]
     |> EEx.eval_string([word: URI.encode_www_form(word), key: key])
-    |> HTTPotion.get!()
+    |> Tesla.get!()
   end
 
   defp webster_headers(conn, _opts) do

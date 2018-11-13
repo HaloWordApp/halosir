@@ -14,11 +14,11 @@ defmodule HaloSir.YoudaoController do
       {:error, :notfound} ->
         resp = word
           |> query_url()
-          |> HTTPotion.get!()
+          |> Tesla.get!()
 
-        if resp.status_code != 200 do
+        if resp.status != 200 do
           MetricStore.failed_query(:youdao, word)
-          resp(conn, resp.status_code, resp.body)
+          resp(conn, resp.status, resp.body)
         else
           result = Map.get(resp, :body)
           MetricStore.dict_query(:youdao, false, word)
