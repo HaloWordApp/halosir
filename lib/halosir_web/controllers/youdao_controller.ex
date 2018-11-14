@@ -1,31 +1,34 @@
 defmodule HaloSirWeb.YoudaoController do
   @moduledoc false
   use HaloSirWeb, :controller
-  alias HaloSir.{Rules, DetsStore, MetricStore, QueryClient}
+  alias HaloSir.{Rules, DetsStore, QueryClient}
 
   plug :response_headers
 
   def query(conn, %{"word" => word}) do
     case DetsStore.get(:youdao, word) do
       {:ok, cached_result} ->
+        Telemetry.execute([:halosir, :youdao, :dets_get], 1, %{cached?: true})
         DetsStore.incr(:youdao, word)
-        MetricStore.dict_query(:youdao, true, word)
         text(conn, cached_result)
       {:error, :notfound} ->
+        Telemetry.execute([:halosir, :youdao, :dets_get], 1, %{cached?: false})
+
         resp = word
           |> query_url()
           |> QueryClient.get!()
 
         if resp.status != 200 do
-          MetricStore.failed_query(:youdao, word)
+          Telemetry.execute([:halosir, :youdao, :query], 1, %{success?: false})
           resp(conn, resp.status, resp.body)
         else
+          Telemetry.execute([:halosir, :youdao, :query], 1, %{success?: true})
+
           result = Map.get(resp, :body)
-          MetricStore.dict_query(:youdao, false, word)
 
           if Rules.should_cache_word?(word) do
             DetsStore.put(:youdao, word, result)
-            MetricStore.dets_cache(:youdao, word)
+            Telemetry.execute([:halosir, :youdao, :dets_put], 1)
           end
 
           text(conn, result)
@@ -53,8 +56,7 @@ defmodule HaloSirWeb.YoudaoController do
         |> Keyword.merge([q: word])
         |> URI.encode_query()
 
-      config[:api_base]
-      |> Kernel.<>(args)
+      config[:api_base] <> args
     end
   end
 
@@ -63,5 +65,4 @@ defmodule HaloSirWeb.YoudaoController do
     |> put_resp_header("cache-control", Application.get_env(:halosir, :cache_control))
     |> put_resp_content_type("application/json")
   end
-
 end

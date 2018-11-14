@@ -1,29 +1,32 @@
 defmodule HaloSirWeb.WebsterController do
   @moduledoc false
   use HaloSirWeb, :controller
-  alias HaloSir.{Rules, DetsStore, MetricStore, QueryClient}
+  alias HaloSir.{Rules, DetsStore, QueryClient}
 
   plug :response_headers
 
   def query(conn, %{"word" => word}) do
     case DetsStore.get(:webster, word) do
       {:ok, cached_result} ->
+        Telemetry.execute([:halosir, :webster, :dets_get], 1, %{cached?: true})
         DetsStore.incr(:webster, word)
-        MetricStore.dict_query(:webster, true, word)
         text(conn, cached_result)
       {:error, :notfound} ->
+        Telemetry.execute([:halosir, :webster, :dets_get], 1, %{cached?: false})
+
         resp = query_webster(word)
 
         if resp.status != 200 do
-          MetricStore.failed_query(:webster, word)
+          Telemetry.execute([:halosir, :webster, :query], 1, %{success?: false})
           resp(conn, resp.status, resp.body)
         else
+          Telemetry.execute([:halosir, :webster, :query], 1, %{success?: true})
+
           result = Map.get(resp, :body)
-          MetricStore.dict_query(:webster, false, word)
 
           if Rules.should_cache_word?(word) do
             DetsStore.put(:webster, word, result)
-            MetricStore.dets_cache(:webster, word)
+            Telemetry.execute([:halosir, :webster, :dets_put], 1)
           end
 
           text(conn, result)

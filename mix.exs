@@ -32,6 +32,7 @@ defmodule HaloSir.Mixfile do
       {:hackney, "~> 1.14.0"},
       {:certifi, "~> 2.3"},
       {:jason, "~> 1.1"},
+      {:telemetry, "~> 0.2.0"},
       {:credo, "~> 0.10", only: :dev},
       {:bypass, github: "oo6/bypass", branch: "use-plug-cowboy", only: [:dev, :test]}
     ]

@@ -7,7 +7,6 @@ defmodule HaloSir.DetsStore do
       {word, cached_result, counter}
 
   """
-
   use GenServer
 
   # Client APIs
