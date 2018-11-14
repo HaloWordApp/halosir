@@ -11,6 +11,7 @@ defmodule HaloSirWeb.WebsterController do
         Telemetry.execute([:halosir, :webster, :dets_get], 1, %{cached?: true})
         DetsStore.incr(:webster, word)
         text(conn, cached_result)
+
       {:error, :notfound} ->
         Telemetry.execute([:halosir, :webster, :dets_get], 1, %{cached?: false})
 
@@ -31,6 +32,7 @@ defmodule HaloSirWeb.WebsterController do
 
           text(conn, result)
         end
+
       _ ->
         halt(conn)
     end
@@ -42,7 +44,7 @@ defmodule HaloSirWeb.WebsterController do
       |> Enum.random()
 
     Application.get_env(:halosir, __MODULE__)[:api_eex]
-    |> EEx.eval_string([word: URI.encode_www_form(word), key: key])
+    |> EEx.eval_string(word: URI.encode_www_form(word), key: key)
     |> QueryClient.get!()
   end
 

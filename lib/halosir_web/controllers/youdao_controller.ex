@@ -11,10 +11,12 @@ defmodule HaloSirWeb.YoudaoController do
         Telemetry.execute([:halosir, :youdao, :dets_get], 1, %{cached?: true})
         DetsStore.incr(:youdao, word)
         text(conn, cached_result)
+
       {:error, :notfound} ->
         Telemetry.execute([:halosir, :youdao, :dets_get], 1, %{cached?: false})
 
-        resp = word
+        resp =
+          word
           |> query_url()
           |> QueryClient.get!()
 
@@ -33,6 +35,7 @@ defmodule HaloSirWeb.YoudaoController do
 
           text(conn, result)
         end
+
       _ ->
         halt(conn)
     end
@@ -44,7 +47,7 @@ defmodule HaloSirWeb.YoudaoController do
     if Keyword.has_key?(config, :proxy) do
       encoded_word =
         word
-        |> String.split
+        |> String.split()
         |> Enum.map(&URI.encode_www_form/1)
         |> Enum.join(" ")
 
@@ -53,7 +56,7 @@ defmodule HaloSirWeb.YoudaoController do
       args =
         config
         |> Keyword.delete(:api_base)
-        |> Keyword.merge([q: word])
+        |> Keyword.merge(q: word)
         |> URI.encode_query()
 
       config[:api_base] <> args
