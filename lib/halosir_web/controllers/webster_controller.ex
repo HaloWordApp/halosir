@@ -1,9 +1,9 @@
 defmodule HaloSirWeb.WebsterController do
   @moduledoc false
   use HaloSirWeb, :controller
-  alias HaloSir.{Rules, DetsStore, MetricStore}
+  alias HaloSir.{Rules, DetsStore, MetricStore, QueryClient}
 
-  plug :webster_headers
+  plug :response_headers
 
   def query(conn, %{"word" => word}) do
     case DetsStore.get(:webster, word) do
@@ -40,10 +40,10 @@ defmodule HaloSirWeb.WebsterController do
 
     Application.get_env(:halosir, __MODULE__)[:api_eex]
     |> EEx.eval_string([word: URI.encode_www_form(word), key: key])
-    |> Tesla.get!()
+    |> QueryClient.get!()
   end
 
-  defp webster_headers(conn, _opts) do
+  defp response_headers(conn, _opts) do
     conn
     |> put_resp_header("cache-control", Application.get_env(:halosir, :cache_control))
     |> put_resp_content_type("application/xml")

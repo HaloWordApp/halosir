@@ -1,9 +1,9 @@
 defmodule HaloSirWeb.YoudaoController do
   @moduledoc false
   use HaloSirWeb, :controller
-  alias HaloSir.{Rules, DetsStore, MetricStore}
+  alias HaloSir.{Rules, DetsStore, MetricStore, QueryClient}
 
-  plug :youdao_headers
+  plug :response_headers
 
   def query(conn, %{"word" => word}) do
     case DetsStore.get(:youdao, word) do
@@ -14,7 +14,7 @@ defmodule HaloSirWeb.YoudaoController do
       {:error, :notfound} ->
         resp = word
           |> query_url()
-          |> Tesla.get!()
+          |> QueryClient.get!()
 
         if resp.status != 200 do
           MetricStore.failed_query(:youdao, word)
@@ -58,7 +58,7 @@ defmodule HaloSirWeb.YoudaoController do
     end
   end
 
-  defp youdao_headers(conn, _opts) do
+  defp response_headers(conn, _opts) do
     conn
     |> put_resp_header("cache-control", Application.get_env(:halosir, :cache_control))
     |> put_resp_content_type("application/json")
