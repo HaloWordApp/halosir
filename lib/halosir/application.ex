@@ -2,7 +2,8 @@ defmodule HaloSir.Application do
   @moduledoc false
   use Application
 
-  alias HaloSir.{DetsStore, Endpoint}
+  alias HaloSir.DetsStore
+  alias HaloSirWeb.Endpoint
 
   def start(_type, _args) do
     import Supervisor.Spec

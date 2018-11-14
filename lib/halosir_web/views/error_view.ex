@@ -1,5 +1,5 @@
-defmodule HaloSir.ErrorView do
-  use HaloSir.Web, :view
+defmodule HaloSirWeb.ErrorView do
+  use HaloSirWeb, :view
 
   def render("404.json", _assigns) do
     %{errors: %{detail: "Page not found"}}

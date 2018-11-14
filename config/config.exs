@@ -3,15 +3,11 @@ use Mix.Config
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-# General application configuration
-config :halosir,
-  namespace: HaloSir
-
 # Configures the endpoint
-config :halosir, HaloSir.Endpoint,
+config :halosir, HaloSirWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "12345",
-  render_errors: [view: HaloSir.ErrorView, accepts: ~w(json)]
+  render_errors: [view: HaloSirWeb.ErrorView, accepts: ~w(json)]
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -28,10 +24,10 @@ config :halosir, HaloSir.DetsStore,
 
 # Configures Dictionary Services' api endpoints
 # This is mainly for writing unit test with Bypass
-config :halosir, HaloSir.YoudaoController,
+config :halosir, HaloSirWeb.YoudaoController,
   api_base: "https://fanyi.youdao.com/fanyiapi.do?type=data&doctype=json&version=1.1&"
 
-config :halosir, HaloSir.WebsterController,
+config :halosir, HaloSirWeb.WebsterController,
   api_eex:
     "http://www.dictionaryapi.com/api/v1/references/collegiate/xml/<%= word %>?key=<%= key %>"
 

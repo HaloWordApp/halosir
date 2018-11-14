@@ -1,5 +1,5 @@
-defmodule HaloSir.WebsterControllerTest do
-  use HaloSir.ConnCase
+defmodule HaloSirWeb.WebsterControllerTest do
+  use HaloSirWeb.ConnCase
 
   alias Plug.Conn
 
@@ -13,7 +13,7 @@ defmodule HaloSir.WebsterControllerTest do
       keys: @keys
     ]
 
-    Application.put_env(:halosir, HaloSir.WebsterController, test_config)
+    Application.put_env(:halosir, HaloSirWeb.WebsterController, test_config)
 
     {:ok, %{bypass: bypass}}
   end

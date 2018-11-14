@@ -1,6 +1,6 @@
-defmodule HaloSir.WebsterController do
+defmodule HaloSirWeb.WebsterController do
   @moduledoc false
-  use HaloSir.Web, :controller
+  use HaloSirWeb, :controller
   alias HaloSir.{Rules, DetsStore, MetricStore}
 
   plug :webster_headers

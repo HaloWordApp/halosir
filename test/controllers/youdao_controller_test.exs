@@ -1,5 +1,5 @@
-defmodule HaloSir.YoudaoControllerTest do
-  use HaloSir.ConnCase
+defmodule HaloSirWeb.YoudaoControllerTest do
+  use HaloSirWeb.ConnCase
 
   alias Plug.Conn
 
@@ -12,7 +12,7 @@ defmodule HaloSir.YoudaoControllerTest do
       key: "testkey"
     ]
 
-    Application.put_env(:halosir, HaloSir.YoudaoController, test_config)
+    Application.put_env(:halosir, HaloSirWeb.YoudaoController, test_config)
 
     {:ok, %{bypass: bypass}}
   end
@@ -54,7 +54,7 @@ defmodule HaloSir.YoudaoControllerTest do
       proxy: "http://localhost:#{bypass.port}/youdao/query/"
     ]
 
-    Application.put_env(:halosir, HaloSir.YoudaoController, proxy_config)
+    Application.put_env(:halosir, HaloSirWeb.YoudaoController, proxy_config)
 
     Bypass.expect(bypass, fn conn ->
       assert conn.request_path == "/youdao/query/test"

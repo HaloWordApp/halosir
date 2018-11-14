@@ -1,6 +1,6 @@
-defmodule HaloSir.YoudaoController do
+defmodule HaloSirWeb.YoudaoController do
   @moduledoc false
-  use HaloSir.Web, :controller
+  use HaloSirWeb, :controller
   alias HaloSir.{Rules, DetsStore, MetricStore}
 
   plug :youdao_headers

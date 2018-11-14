@@ -1,4 +1,4 @@
-defmodule HaloSir.Endpoint do
+defmodule HaloSirWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :halosir
 
   # Code reloading can be explicitly enabled under the
@@ -26,5 +26,5 @@ defmodule HaloSir.Endpoint do
     key: "_halosir_key",
     signing_salt: "GeMn+4/h"
 
-  plug HaloSir.Router
+  plug HaloSirWeb.Router
 end
