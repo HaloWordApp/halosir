@@ -1,3 +1,0 @@
-Bind = "127.0.0.1:9901"
-LocalDatabase = "./data/chronograf/chronograf.db"
-QueryResponseBytesLimit = 2500000
