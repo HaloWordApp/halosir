@@ -49,7 +49,7 @@ defmodule HaloSir.DetsStore do
         file_path =
           [config[:data_dir], filename]
           |> Path.join()
-          |> String.to_char_list()
+          |> String.to_charlist()
 
         {:ok, ref} = :dets.open_file(table, access: :read_write, file: file_path)
 
