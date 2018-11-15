@@ -51,7 +51,7 @@ defmodule HaloSirWeb.WebsterControllerTest do
     assert_headers(conn)
   end
 
-  test "Failed query shouldn't be cached, and should return the same response as source", %{
+  test "Failed query shouldn't be cached, and should return 502 and custom error", %{
     bypass: bypass
   } do
     Bypass.expect(bypass, fn conn ->
@@ -67,8 +67,8 @@ defmodule HaloSirWeb.WebsterControllerTest do
 
     conn = get(build_conn(), "/webster/query/test")
 
-    assert conn.status == 500
-    assert conn.resp_body =~ "Internal Server Error"
+    assert conn.status == 502
+    assert conn.resp_body == "upstream failure"
     assert :dets.lookup(:webster, "test") == []
   end
 

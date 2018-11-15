@@ -36,8 +36,7 @@ defmodule HaloSirWeb.QueryController do
 
         if resp.status != 200 do
           Telemetry.execute([:halosir, type, :query], 1, %{success?: false})
-          # TODO: use 502 and custom error message
-          resp(conn, resp.status, resp.body)
+          resp(conn, 502, "upstream failure")
         else
           Telemetry.execute([:halosir, type, :query], 1, %{success?: true})
 
