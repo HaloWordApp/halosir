@@ -18,3 +18,4 @@ git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.6.1
 asdf plugin-add erlang
 asdf plugin-add elixir
 asdf install
+asdf install
