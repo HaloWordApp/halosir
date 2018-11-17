@@ -7,9 +7,14 @@ mkdir /root/.ssh/
 touch /root/.ssh/known_hosts
 ssh-keyscan github.com >> /root/.ssh/known_hosts
 
-# Install unzip for Elixir
+# Install unzip and setup locales for Elixir
 apt-get update
-apt-get install -y --no-install-recommends unzip
+apt-get install -y --no-install-recommends unzip locales
+
+locale-gen en_US.UTF-8
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US:en
+export LC_ALL=en_US.UTF-8
 
 # Install Erlang and Elixir
 git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.6.1
@@ -19,3 +24,6 @@ asdf plugin-add erlang
 asdf plugin-add elixir
 asdf install
 asdf install
+
+mix local.hex --force
+mix local.rebar --force

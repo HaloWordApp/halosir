@@ -6,9 +6,6 @@ set -ex
 
 asdf current
 
-mix local.hex --force
-mix local.rebar --force
-
 export MIX_ENV=prod
 
 mix deps.get --only prod
