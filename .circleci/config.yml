@@ -9,4 +9,3 @@ jobs:
       - run: docker/release.sh
       - store_artifacts:
           path: /artifact/halosir.tar.gz
-          destination: artifact-file
