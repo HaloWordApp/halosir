@@ -40,3 +40,14 @@ jobs:
             go get github.com/tcnksm/ghr
             VERSION=$(cat VERSION)
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} /artifacts/halosir.tar.gz
+workflows:
+  version: 2
+  test-and-release:
+    jobs:
+      - test-and-build-otp-release
+      - publish-github-release:
+          requires:
+            - publish-github-release
+          filters:
+            branches:
+              only: master
