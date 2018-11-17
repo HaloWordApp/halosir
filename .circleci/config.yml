@@ -31,16 +31,15 @@ jobs:
     docker:
       - image: circleci/golang:1.11.2
     steps:
-      - run: "mkdir /work"
       - attach_workspace:
-          at: /work
+          at: ~/work
       - run:
           name: "Publish Release on GitHub"
           command: |
             go get github.com/tcnksm/ghr
-            ls -l /work
-            VERSION=$(cat /work/VERSION)
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} /work/halosir.tar.gz
+            ls -l ~/work
+            VERSION=$(cat ~/work/VERSION)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ~/work/halosir.tar.gz
 workflows:
   version: 2
   test-and-release:
