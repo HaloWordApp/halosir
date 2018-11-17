@@ -1,28 +1,22 @@
 version: 2
 jobs:
-  test-and-build-otp-release:
+  build-otp-release:
     docker:
       - image: elaworkshop/halosir-builder:latest
     working_directory: ~/app
     steps:
       - checkout
       - run:
-          name: "Inspect Tools Version"
+          name: "Test & Build Release"
           command: |
             . ~/.asdf/asdf.sh
             asdf current
-      - run:
-          name: "Fetch Dependencies"
-          command: "mix deps.get"
-      - run:
-          name: "Run Tests"
-          command: "mix test"
-      - run:
-          name: "Build OTP Release"
-          command: "MIX_ENV=prod mix release --profile=halosir:prod"
-      - run:
-          name: "Move Artifact"
-          command: |
+
+            mix deps.get
+            mix test
+
+            MIX_ENV=prod mix release --profile=halosir:prod
+
             mkdir /artifact
             cp _build/prod/rel/halosir/releases/*/halosir.tar.gz /artifact/
             mix run --eval "HaloSir.Mixfile.project[:version] |> IO.puts" > VERSION
