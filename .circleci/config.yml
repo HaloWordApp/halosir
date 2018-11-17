@@ -1,0 +1,12 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: elaworkshop/halosir-builder:latest
+    working_directory: ~/app
+    steps:
+      - checkout
+      - run: docker/release.sh
+      - store_artifacts:
+          path: /artifact/halosir.tar.gz
+          destination: artifact-file
