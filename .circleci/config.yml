@@ -19,7 +19,7 @@ jobs:
 
             mkdir /artifact
             cp _build/prod/rel/halosir/releases/*/halosir.tar.gz /artifact/
-            mix run --eval "HaloSir.Mixfile.project[:version]"
+            mix compile
             mix run --eval "HaloSir.Mixfile.project[:version] |> IO.puts" > /artifact/VERSION
       - store_artifacts:
           path: /artifact/halosir.tar.gz
