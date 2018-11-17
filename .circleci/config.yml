@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build-otp-release:
+  test-and-build-otp-release:
     docker:
       - image: elaworkshop/halosir-builder:latest
     working_directory: ~/app
