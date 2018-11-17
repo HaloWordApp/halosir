@@ -7,6 +7,7 @@ config :phoenix, :json_library, Jason
 config :halosir, HaloSirWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "12345",
+  server: true,
   render_errors: [view: HaloSirWeb.ErrorView, accepts: ~w(json)]
 
 # Configures Elixir's Logger
