@@ -19,6 +19,7 @@ jobs:
 
             mkdir /artifact
             cp _build/prod/rel/halosir/releases/*/halosir.tar.gz /artifact/
+            mix run --eval "HaloSir.Mixfile.project[:version]"
             mix run --eval "HaloSir.Mixfile.project[:version] |> IO.puts" > /artifact/VERSION
       - store_artifacts:
           path: /artifact/halosir.tar.gz
@@ -32,16 +33,12 @@ jobs:
       - image: circleci/golang:1.11.2
     steps:
       - attach_workspace:
-          at: ~/work
+          at: .
       - run:
           name: "Publish Release on GitHub"
           command: |
             go get github.com/tcnksm/ghr
-            ls -l ~/work
-            VERSION=$(cat ~/work/VERSION)
-            echo $VERSION
-            echo ${VERSION}
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ~/work/halosir.tar.gz
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete $(cat ./VERSION) ./halosir.tar.gz
 workflows:
   version: 2
   test-and-release:
