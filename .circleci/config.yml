@@ -47,7 +47,7 @@ workflows:
       - test-and-build-otp-release
       - publish-github-release:
           requires:
-            - publish-github-release
+            - test-and-build-otp-release
           filters:
             branches:
               only: master
