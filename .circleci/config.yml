@@ -1,11 +1,42 @@
 version: 2
 jobs:
-  build:
+  test-and-build-otp-release:
     docker:
       - image: elaworkshop/halosir-builder:latest
     working_directory: ~/app
     steps:
       - checkout
-      - run: docker/release.sh
+      - run:
+          name: "Inspect Tools Version"
+          command: |
+            . ~/.asdf/asdf.sh
+            asdf current
+      - run:
+          name: "Fetch Dependencies"
+          command: "mix deps.get"
+      - run:
+          name: "Run Tests"
+          command: "mix test"
+      - run:
+          name: "Build OTP Release"
+          command: "MIX_ENV=prod mix release --profile=halosir:prod"
+      - run:
+          name: "Move Artifact"
+          command: |
+            mkdir /artifact
+            cp _build/prod/rel/halosir/releases/*/halosir.tar.gz /artifact/
+            mix run --eval "HaloSir.Mixfile.project[:version] |> IO.puts" > VERSION
       - store_artifacts:
           path: /artifact/halosir.tar.gz
+  publish-github-release:
+    docker:
+      - image: circleci/golang:1.11.2
+    steps:
+      - attach_workspace:
+          at: /artifacts
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            go get github.com/tcnksm/ghr
+            VERSION=$(cat VERSION)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} /artifacts/halosir.tar.gz
