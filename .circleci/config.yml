@@ -38,11 +38,7 @@ jobs:
           name: "Publish Release on GitHub"
           command: |
             go get github.com/tcnksm/ghr
-            ls -l ~/work
-            VERSION=$(cat ~/work/VERSION)
-            echo $VERSION
-            echo ${VERSION}
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ~/work/halosir.tar.gz
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete $(cat ~/work/VERSION) ~/work/halosir.tar.gz
 workflows:
   version: 2
   test-and-release:
