@@ -12,4 +12,4 @@ mix deps.get --only prod
 mix release --profile=halosir:prod
 
 mkdir /artifact
-cp /_build/prod/rel/halosir/releases/*/halosir.tar.gz /artifact/
+cp _build/prod/rel/halosir/releases/*/halosir.tar.gz /artifact/
