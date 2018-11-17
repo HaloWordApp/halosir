@@ -9,7 +9,6 @@ defmodule HaloSir.Mixfile do
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
-      aliases: aliases(),
       deps: deps()
     ]
   end
@@ -45,12 +44,6 @@ defmodule HaloSir.Mixfile do
       # Lint & Test
       {:credo, "~> 0.10", only: :dev},
       {:bypass, github: "oo6/bypass", branch: "use-plug-cowboy", only: [:dev, :test]}
-    ]
-  end
-
-  defp aliases() do
-    [
-      test: ["cleanup_testdata", "test"]
     ]
   end
 end
