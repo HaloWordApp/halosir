@@ -25,7 +25,8 @@ jobs:
       - persist_to_workspace:
           root: /artifact
           paths:
-            - /artifact
+            - halosir.tar.gz
+            - VERSION
   publish-github-release:
     docker:
       - image: circleci/golang:1.11.2
