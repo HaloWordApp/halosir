@@ -10,8 +10,7 @@ defmodule HaloSir.DetsStore do
   use GenServer
 
   # Client APIs
-
-  def start_link do
+  def start_link(_) do
     GenServer.start_link(__MODULE__, Application.get_env(:halosir, __MODULE__), name: __MODULE__)
   end
 
@@ -38,7 +37,7 @@ defmodule HaloSir.DetsStore do
   end
 
   # GenServer Callbacks
-
+  @impl true
   def init(config) do
     # Start DETS for each table
     refs =
@@ -58,6 +57,7 @@ defmodule HaloSir.DetsStore do
     {:ok, refs}
   end
 
+  @impl true
   def handle_cast(:close, refs) do
     Enum.each(refs, fn ref ->
       :dets.close(ref)
@@ -68,6 +68,7 @@ defmodule HaloSir.DetsStore do
 
   def handle_cast(_msg, state), do: {:noreply, state}
 
+  @impl true
   def terminate(_reason, refs) do
     Enum.each(refs, fn ref ->
       :dets.close(ref)

@@ -6,11 +6,9 @@ defmodule HaloSir.Application do
   alias HaloSirWeb.Endpoint
 
   def start(_type, _args) do
-    import Supervisor.Spec
-
     children = [
-      worker(DetsStore, []),
-      supervisor(Endpoint, [])
+      DetsStore,
+      Endpoint,
     ]
 
     opts = [strategy: :one_for_one, name: HaloSir.RootSup]
