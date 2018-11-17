@@ -6,7 +6,6 @@ jobs:
     working_directory: ~/app
     steps:
       - checkout
-      - run: mix test
       - run: docker/release.sh
       - store_artifacts:
           path: /artifact/halosir.tar.gz
