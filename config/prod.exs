@@ -7,5 +7,3 @@ config :halosir, HaloSirWeb.Endpoint,
   ]
 
 config :logger, level: :error
-
-import_config "prod.secret.exs"

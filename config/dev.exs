@@ -24,4 +24,4 @@ config :phoenix, :stacktrace_depth, 20
 config :halosir, cache_control: "max-age=0"
 
 # Import api keys from production server for now
-import_config "prod.secret.exs"
+import_config "dev.secret.exs"
