@@ -25,4 +25,10 @@ defmodule HaloSir.RulesTest do
 
     refute should_cache_word?(sentence)
   end
+
+  test "Should not cache words with no English letter" do
+    word = "『氷菓』"
+
+    refute should_cache_word?(word)
+  end
 end

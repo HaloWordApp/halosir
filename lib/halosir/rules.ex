@@ -7,7 +7,7 @@ defmodule HaloSir.Rules do
   Don't cache sentences.
   """
   def should_cache_word?(word) do
-    not_too_long?(word) && not_sentence?(word)
+    not_too_long?(word) && not_sentence?(word) && has_english_letter?(word)
   end
 
   defp not_sentence?(word) do
@@ -19,5 +19,10 @@ defmodule HaloSir.Rules do
 
   defp not_too_long?(word) do
     String.length(word) <= 20
+  end
+
+  @reg ~r/[a-zA-Z]/
+  defp has_english_letter?(word) do
+    Regex.match?(@reg, word)
   end
 end
