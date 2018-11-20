@@ -5,7 +5,6 @@ config :phoenix, :json_library, Jason
 
 # Configures the endpoint
 config :halosir, HaloSirWeb.Endpoint,
-  url: [host: "localhost"],
   secret_key_base: "12345",
   server: true,
   render_errors: [view: HaloSirWeb.ErrorView, accepts: ~w(json)]
@@ -26,10 +25,17 @@ config :halosir, HaloSir.DetsStore,
 # Configures Dictionary Services' api endpoints
 # This is mainly for writing unit test with Bypass
 config :halosir, HaloSirWeb.YoudaoController,
-  api_base: "https://fanyi.youdao.com/fanyiapi.do?type=data&doctype=json&version=1.1&"
+  api_base: "https://fanyi.youdao.com/fanyiapi.do?type=data&doctype=json&version=1.1&",
+  keyfrom: "ABC",
+  # proxy: "if using proxy",
+  key: "123"
 
 config :halosir, HaloSirWeb.WebsterController,
   api_eex:
-    "http://www.dictionaryapi.com/api/v1/references/collegiate/xml/<%= word %>?key=<%= key %>"
+    "http://www.dictionaryapi.com/api/v1/references/collegiate/xml/<%= word %>?key=<%= key %>",
+  keys: [
+    "123",
+    "456"
+  ]
 
 import_config "#{Mix.env()}.exs"
