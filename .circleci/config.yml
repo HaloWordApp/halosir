@@ -19,8 +19,7 @@ jobs:
 
             mkdir /artifact
             cp _build/prod/rel/halosir/releases/*/halosir.tar.gz /artifact/
-            mix compile
-            mix run --eval "HaloSir.Mixfile.project[:version] |> IO.puts" > /artifact/VERSION
+            mix run --eval "File.write!(\"/artifact/VERSION\", HaloSir.Mixfile.project[:version])"
       - store_artifacts:
           path: /artifact/halosir.tar.gz
       - persist_to_workspace:
