@@ -38,9 +38,7 @@ jobs:
           command: |
             go get github.com/tcnksm/ghr
             VERSION=$(cat ~/work/VERSION)
-            cat ~/work/VERSION
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -n "HaloSir ${VERSION}"
-              -delete ${VERSION} ~/work/halosir.tar.gz
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -n "HaloSir ${VERSION}" -delete ${VERSION} ~/work/halosir.tar.gz
 workflows:
   version: 2
   test-and-release:
