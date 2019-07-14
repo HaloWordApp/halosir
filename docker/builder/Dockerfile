@@ -1,4 +1,4 @@
-FROM buildpack-deps:bionic
+FROM buildpack-deps:disco
 
 WORKDIR /builder
 COPY docker/builder/builder_setup.sh ./

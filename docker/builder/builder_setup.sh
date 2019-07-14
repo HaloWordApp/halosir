@@ -17,7 +17,7 @@ export LANGUAGE=en_US:en
 export LC_ALL=en_US.UTF-8
 
 # Install Erlang and Elixir
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.6.1
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.7.2
 
 . ~/.asdf/asdf.sh
 asdf plugin-add erlang
