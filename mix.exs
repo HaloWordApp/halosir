@@ -5,7 +5,7 @@ defmodule HaloSir.Mixfile do
     [
       app: :halosir,
       version: "2.1.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
@@ -32,7 +32,7 @@ defmodule HaloSir.Mixfile do
 
       # HTTP Client
       {:tesla, "~> 1.2"},
-      {:hackney, "~> 1.14.0"},
+      {:hackney, "~> 1.14"},
       {:certifi, "~> 2.3"},
 
       # Metrics
@@ -43,7 +43,7 @@ defmodule HaloSir.Mixfile do
 
       # Lint & Test
       {:credo, "~> 0.10", only: :dev},
-      {:bypass, github: "oo6/bypass", branch: "use-plug-cowboy", only: [:dev, :test]}
+      {:bypass, "~> 1.0", only: [:dev, :test]}
     ]
   end
 end

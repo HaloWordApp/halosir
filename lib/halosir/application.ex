@@ -8,7 +8,7 @@ defmodule HaloSir.Application do
   def start(_type, _args) do
     children = [
       DetsStore,
-      Endpoint,
+      Endpoint
     ]
 
     opts = [strategy: :one_for_one, name: HaloSir.RootSup]

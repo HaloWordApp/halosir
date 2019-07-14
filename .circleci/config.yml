@@ -15,7 +15,7 @@ jobs:
             mix deps.get
             mix test
 
-            MIX_ENV=prod mix release --profile=halosir:prod
+            MIX_ENV=prod mix distillery.release --profile=halosir:prod
 
             mkdir /artifact
             cp _build/prod/rel/halosir/releases/*/halosir.tar.gz /artifact/
