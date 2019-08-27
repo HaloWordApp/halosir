@@ -13,6 +13,9 @@ defmodule HaloSirWeb.WebsterController do
   def dict_type(), do: :webster
 
   @impl true
+  def valid_response?(_), do: true
+
+  @impl true
   def query_url(word) do
     key =
       Application.get_env(:halosir, __MODULE__)[:keys]

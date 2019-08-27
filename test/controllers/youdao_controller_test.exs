@@ -30,21 +30,23 @@ defmodule HaloSirWeb.YoudaoControllerTest do
   end
 
   test "Query non-cached word should hit the server, then cache the result", %{bypass: bypass} do
+    json_body = ~s({"query":"test","errorCode":0})
+
     Bypass.expect(bypass, fn conn ->
       conn = Conn.fetch_query_params(conn)
       assert conn.query_params["q"] == "test"
       assert conn.method == "GET"
 
-      Conn.resp(conn, 200, "test result to cache")
+      Conn.resp(conn, 200, json_body)
     end)
 
     :dets.delete(:youdao, "test")
 
     conn = get(build_conn(), "/youdao/query/test")
 
-    assert conn.resp_body =~ "test result to cache"
-    assert HaloSir.DetsStore.get(:youdao, "test") == {:ok, "test result to cache"}
-    assert {"test", "test result to cache", 1} == :dets.lookup(:youdao, "test") |> hd
+    assert conn.resp_body =~ json_body
+    assert HaloSir.DetsStore.get(:youdao, "test") == {:ok, json_body}
+    assert {"test", json_body, 1} == :dets.lookup(:youdao, "test") |> hd
 
     assert_headers(conn)
   end
@@ -56,20 +58,22 @@ defmodule HaloSirWeb.YoudaoControllerTest do
 
     Application.put_env(:halosir, HaloSirWeb.YoudaoController, proxy_config)
 
+    json_body = ~s({"query":"test","errorCode":0})
+
     Bypass.expect(bypass, fn conn ->
       assert conn.request_path == "/youdao/query/test"
       assert conn.method == "GET"
 
-      Conn.resp(conn, 200, "test result from proxy")
+      Conn.resp(conn, 200, json_body)
     end)
 
     :dets.delete(:youdao, "test")
 
     conn = get(build_conn(), "/youdao/query/test")
 
-    assert conn.resp_body =~ "test result from proxy"
-    assert HaloSir.DetsStore.get(:youdao, "test") == {:ok, "test result from proxy"}
-    assert {"test", "test result from proxy", 1} == :dets.lookup(:youdao, "test") |> hd
+    assert conn.resp_body =~ json_body
+    assert HaloSir.DetsStore.get(:youdao, "test") == {:ok, json_body}
+    assert {"test", json_body, 1} == :dets.lookup(:youdao, "test") |> hd
 
     assert_headers(conn)
   end
@@ -91,6 +95,28 @@ defmodule HaloSirWeb.YoudaoControllerTest do
 
     assert conn.status == 502
     assert conn.resp_body == "upstream failure"
+    assert :dets.lookup(:youdao, "test") == []
+  end
+
+  test "Bad query response shouldn't be cached, but should pass-through response", %{
+    bypass: bypass
+  } do
+    json_body = ~s({"query":"test","errorCode":50})
+
+    Bypass.expect(bypass, fn conn ->
+      conn = Conn.fetch_query_params(conn)
+      assert conn.query_params["q"] == "test"
+      assert conn.method == "GET"
+
+      Conn.resp(conn, 200, json_body)
+    end)
+
+    :dets.delete(:youdao, "test")
+
+    conn = get(build_conn(), "/youdao/query/test")
+
+    assert conn.status == 200
+    assert conn.resp_body == json_body
     assert :dets.lookup(:youdao, "test") == []
   end
 

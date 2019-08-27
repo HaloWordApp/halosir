@@ -1,6 +1,7 @@
 defmodule HaloSirWeb.QueryController do
   @moduledoc """
-  A Phoenix controller implementing this behaviour can call `query_word` to share the default pipeline.
+  A Phoenix controller implementing this behaviour can call `query_word` to
+  reuse the pipeline for caching, metrics and more.
   """
 
   @doc """
@@ -9,9 +10,15 @@ defmodule HaloSirWeb.QueryController do
   @callback query_url(word :: String.t()) :: String.t()
 
   @doc """
-  Defines the dictionary type
+  Defines the dictionary type (`webster`, `youdao` etc..)
   """
   @callback dict_type() :: atom()
+
+  @doc """
+  Validate the result from remote servers, because some have
+  "custom" error reporting than HTTP response code
+  """
+  @callback valid_response?(resp :: Tesla.Env.t()) :: boolean()
 
   import Plug.Conn
   import Phoenix.Controller, only: [text: 2]
@@ -42,7 +49,7 @@ defmodule HaloSirWeb.QueryController do
 
           result = Map.get(resp, :body)
 
-          if Rules.should_cache_word?(word) do
+          if Rules.should_cache_word?(word) && controller_module.valid_response?(resp) do
             DetsStore.put(type, word, result)
             Telemetry.execute([:halosir, type, :dets_put], 1)
           end

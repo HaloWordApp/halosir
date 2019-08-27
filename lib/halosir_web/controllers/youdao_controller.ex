@@ -13,6 +13,16 @@ defmodule HaloSirWeb.YoudaoController do
   def dict_type(), do: :youdao
 
   @impl true
+  def valid_response?(resp) do
+    case Jason.decode(resp.body) do
+      {:ok, r} ->
+        ec = Map.get(r, "errorCode", 0)
+        ec == 0
+      _ -> false
+    end
+  end
+
+  @impl true
   def query_url(word) do
     config = Application.get_env(:halosir, __MODULE__)
 
