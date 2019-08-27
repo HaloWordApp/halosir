@@ -8,7 +8,7 @@ environment :prod do
   set cookie: :"prod-secret"
   set vm_args: "rel/vm.args"
   set config_providers: [
-    {Mix.Releases.Config.Providers.Elixir, ["${RELEASE_ROOT_DIR}/config/secret.exs"]}
+    {Distillery.Releases.Config.Providers.Elixir, ["${RELEASE_ROOT_DIR}/config/secret.exs"]}
   ]
   set overlays: [
     {:mkdir, "config"},
